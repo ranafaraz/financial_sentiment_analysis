@@ -23,6 +23,7 @@ from myapp import views as myapp_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-     path('', myapp_views.home, name='home'),
+     path('', include('myapp.urls')),
+     # path('', myapp_views.home, name='home'),
      path('upload/', include('myapp.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

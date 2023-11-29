@@ -1,31 +1,19 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Financial Sentiment Analysis</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">FinSentiment</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#scrape-data">Scrape Data</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#perform-analysis">Perform Analysis</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#read-articles">Read Articles</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+<!-- myapp/templates/myapp/home.html -->
 
+{% extends 'myapp/base.html' %}
+
+{% load static %}
+
+{% block title %}Home - Financial Sentiment Analysis{% endblock %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to FinSentiment</h1>
+        <p class="lead">A Financial Sentiment Analysis Tool Using Machine Learning Blending Techniques.</p>
+        <hr class="my-4">
+        <p>Explore financial data insights and predictive analytics.</p>
+    </div>
+    <!-- Additional content -->
     <div class="container mt-4">
       <!-- Image Slider (Carousel) -->
       <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -56,20 +44,4 @@
       </div>
     </div>
 
-    <div class="container mt-4">
-        <div class="jumbotron">
-            <h1 class="display-4">Welcome to FinSentiment</h1>
-            <p class="lead">A Financial Sentiment Analysis Tool Using Machine Learning Blending Techniques.</p>
-            <hr class="my-4">
-            <p>Explore financial data insights and predictive analytics.</p>
-        </div>
-
-        <!-- Additional Content Here -->
-
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</body>
-</html>
+{% endblock %}
