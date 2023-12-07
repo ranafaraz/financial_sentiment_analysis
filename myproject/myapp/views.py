@@ -5,7 +5,9 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from .forms import *
 from .models import *
-from .analysis import *
+from .analysis import perform_analysis
+from django.conf import settings
+import os
 
 def home(request):
     return render(request, 'myapp/home.html')
@@ -27,17 +29,49 @@ def dataset_list(request):
     return render(request, 'myapp/dataset_list.html', {'datasets': datasets})
 
 ## Perform Analysis Web Page
-def perform_analysis(request):
+def perform_analysis_view(request):
+    datasets = Dataset.objects.all()
     if request.method == 'POST':
-        form = ClassifierDatasetForm(request.POST)
-        if form.is_valid():
-            # Process the form data
-            # Redirect to the analysis results page after processing
-            return redirect('view_results')
-    else:
-        form = ClassifierDatasetForm()
+        selected_dataset_url = request.POST.get('dataset')
+        # Assume the selected_dataset_url is something like "/media/datasets/myfile.csv"
+        relative_file_path = selected_dataset_url.replace(settings.MEDIA_URL, '', 1)
 
-    return render(request, 'myapp/perform_analysis.html', {'form': form})
+        # Construct the full file system path by appending the relative path to MEDIA_ROOT
+        full_file_path = os.path.join(settings.MEDIA_ROOT, relative_file_path)
+
+        # Get the list of selected classifiers
+        selected_classifiers = request.POST.getlist('classifiers')
+
+        # Map the selected classifier names to their corresponding objects
+        classifiers = {
+            'Logistic Regression': LogisticRegression(max_iter=1000),
+            'SDG': SGDClassifier(),
+            'Random Forest': RandomForestClassifier(max_depth=10),
+            'Support Vector Machine': SVC(),
+            'Naive Bayes': MultinomialNB(),
+            'Decision Tree': DecisionTreeClassifier(),
+            'Bagging': BaggingClassifier(),
+            'Gaussian Naive Bayes': GaussianNB(),
+            'Extreme Gradient Boosting (XGBoost)': XGBClassifier()
+        }
+        selected_classifier_objects = [classifiers_dict[name] for name in selected_classifiers if name in classifiers_dict]
+
+        # Debugging: Print the classifier objects
+        print("Classifier Objects:", selected_classifier_objects)
+
+        # Call the perform_analysis method with the file path and selected classifiers
+        # Debugging: Print the file path
+        print("File Path:", file_path)
+
+        # Call the perform_analysis method with the file path and selected classifiers
+        # perform_analysis(full_file_path, selected_classifier_objects)
+
+        # Redirect to results or another page as needed
+        return redirect('view_results')
+    else:
+        datasets = Dataset.objects.all()
+        # Include other necessary forms
+        return render(request, 'myapp/perform_analysis.html', {'datasets': datasets})
 ####################################################################################
 def view_results(request):
     return render(request, 'myapp/view_results.html')

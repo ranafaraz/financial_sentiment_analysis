@@ -12,10 +12,44 @@
     <!-- Add images -->
     <img src="{% static 'images/finSentiment4.png' %}" alt="Perform Sentiment Analysis" class="img-fluid" style="max-width: 800px; height: auto;">
     <!-- More content -->
+    <form method="post" action="{% url 'perform_analysis' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Dropdown for selecting a dataset -->
+        <label for="dataset">Select a Dataset:</label>
+        <select name="dataset" id="dataset">
+            {% for dataset in datasets %}
+                <option value="{{ dataset.file.url }}">{{ dataset.name }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Dropdown for selecting multiple classifiers -->
+        <label for="classifiers">Select Classifiers:</label>
+        <select name="classifiers" id="classifiers" multiple="multiple">
+            <option value="Logistic Regression">Logistic Regression</option>
+            <option value="SDG">SDG</option>
+            <option value="Random Forest">Random Forest</option>
+            <!-- Add other options here -->
+        </select>
+
+        <button type="submit">Perform Analysis</button>
+    </form>
 </div>
 
 
+<script>
+    $(document).ready(function() {
 
+        $('#dataset').select2({
+        theme: 'bootstrap'
+        });
+        // Initialize Select2
+        $('#classifiers').select2({
+        theme: 'bootstrap'
+        });
+
+    });
+</script>
 
 
 {% endblock %}

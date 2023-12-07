@@ -1,34 +1,40 @@
+<!-- perform_analysis.html -->
+
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block title %}Available Datasets{% endblock %}
+{% block content %}
 <!-- dataset_list.html -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+<div class="container-fluid  mt-4">
+  <div class="jumbotron custom-jumbotron">
+      <h1 class="display-4">Available Datasets</h1>
+      <p class="lead">A Financial Sentiment Analysis Tool Using Machine Learning Blending Techniques.</p>
+      <hr class="my-4">
+      <p>Explore financial data insights and predictive analytics.</p>
+  </div>
+  <table id="datasetTable">
+      <thead>
+          <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Download Dataset</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for dataset in datasets %}
+          <tr>
+              <td>{{ dataset.name }}</td>
+              <td>{{ dataset.description }}</td>
+              <td><a href="{{ dataset.file.url }}" download>Download</a></td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+</div>
+  <script>
+  $(document).ready( function () {
+      $('#datasetTable').DataTable();
+  });
+  </script>
 
-<h2>Available Datasets</h2>
-<ul>
-    {% for dataset in datasets %}
-    <li>{{ dataset.name }}</li>
-    {% empty %}
-    <li>No datasets available.</li>
-    {% endfor %}
-</ul>
-
-
-<table id="datasetTable">
-    <thead>
-        <tr>
-            <th>Name</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for dataset in datasets %}
-        <tr>
-            <td>{{ dataset.name }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<script>
-$(document).ready( function () {
-    $('#datasetTable').DataTable();
-});
-</script>
+{% endblock %}
