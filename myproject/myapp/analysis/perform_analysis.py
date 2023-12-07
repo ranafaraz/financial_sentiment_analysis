@@ -1,8 +1,43 @@
 # This page contains the core logic of the Application
 
-from .models import AnalysisResult
+from myapp.models import AnalysisResult
 from django.utils.timezone import make_aware
 import pytz
+
+def perform_analysis(file_path, classifiers):
+    for r in range(2, len(classifiers) + 1):
+        combinations_list = list(combinations(classifiers, r))
+
+        for combo in combinations_list:
+            num_classifiers = len(combo)
+            results = train_and_evaluate_blended_classifier(combo, additional_info, num_classifiers)
+
+            # Create an instance of the model and save it to the database
+            result_instance = AnalysisResult(
+                blended_classifiers=str(combo),
+                accuracy=results['Accuracy'],
+                kappa=results['Kappa'],
+                precision=results['Precision'],
+                recall=results['Recall'],
+                f1_score=results['F1-Score'],
+                confusion_matrix=str(results['Confusion Matrix']),
+                execution_time=results['Execution Time (s)'],
+                total_classifiers=results['Total Classifiers'],
+                total_features=results['Total Features'],
+                training_data_size=results['Training Data Size'],
+                test_data_size=results['Test Data Size'],
+                random_state=results['Random State'],
+                preprocessing=results['Preprocessing'],
+                smote=results['SMOTE'],
+                total_cpu_cores=results['Total CPU Cores'],
+                cpu_usage=results['CPU Usage (%)'],
+                total_ram=results['Total RAM'],
+                memory_usage=results['Memory Usage'],
+                processor_type=results['Processor Type'],
+                os_name=results['OS']
+            )
+            result_instance.save()
+    return result
 
 # Custom Tokenization function
 def custom_tokenize(text):
@@ -178,36 +213,3 @@ def Vectorizing_Balancing_Splitting():
     X_test_tfidf_dense = X_test.toarray()
 
 ########################################################################################################################################
-
-for r in range(2, len(classifiers) + 1):
-    combinations_list = list(combinations(classifiers, r))
-
-    for combo in combinations_list:
-        num_classifiers = len(combo)
-        results = train_and_evaluate_blended_classifier(combo, additional_info, num_classifiers)
-
-        # Create an instance of the model and save it to the database
-        result_instance = AnalysisResult(
-            blended_classifiers=str(combo),
-            accuracy=results['Accuracy'],
-            kappa=results['Kappa'],
-            precision=results['Precision'],
-            recall=results['Recall'],
-            f1_score=results['F1-Score'],
-            confusion_matrix=str(results['Confusion Matrix']),
-            execution_time=results['Execution Time (s)'],
-            total_classifiers=results['Total Classifiers'],
-            total_features=results['Total Features'],
-            training_data_size=results['Training Data Size'],
-            test_data_size=results['Test Data Size'],
-            random_state=results['Random State'],
-            preprocessing=results['Preprocessing'],
-            smote=results['SMOTE'],
-            total_cpu_cores=results['Total CPU Cores'],
-            cpu_usage=results['CPU Usage (%)'],
-            total_ram=results['Total RAM'],
-            memory_usage=results['Memory Usage'],
-            processor_type=results['Processor Type'],
-            os_name=results['OS']
-        )
-        result_instance.save()

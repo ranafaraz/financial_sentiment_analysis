@@ -1,35 +1,98 @@
-<!-- myapp/templates/myapp/view_results.html -->
+{% extends 'myapp/base.html' %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>View Results</title>
-    <!-- Include Bootstrap CSS for styling (optional) -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-4">
+{% load static %}
+
+{% block title %}View Results - Financial Sentiment Analysis{% endblock %}
+
+{% block content %}
+    <div class="">
         <h1>Analysis Results</h1>
-        <table class="table">
+        <table id="resultsTable" class="display" width="100%">
             <thead>
                 <tr>
+                    <th></th> <!-- For toggle button -->
                     <th>Blended Classifiers</th>
                     <th>Accuracy</th>
                     <th>Kappa</th>
-                    <!-- Add other fields as table headers -->
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1-Score</th>
+                    <th>Confusion Matrix</th>
+                    <th>Execution Time (s)</th>
                 </tr>
             </thead>
             <tbody>
-                {% for result in results %}
-                <tr>
-                    <td>{{ result.blended_classifiers }}</td>
-                    <td>{{ result.accuracy }}</td>
-                    <td>{{ result.kappa }}</td>
-                    <!-- Add other fields as table data -->
-                </tr>
-                {% endfor %}
+                <!-- Rows will be populated by DataTables using Ajax -->
             </tbody>
         </table>
     </div>
-</body>
-</html>
+
+    <script>
+    $(document).ready(function() {
+        var table = $('#resultsTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "stateSave": true,
+            "ajax": "{% url 'get_results' %}",
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]], // Page length options
+            "columns": [
+                { "orderable": false, "data": null, "defaultContent": "<i class='fas fa-plus'></i>", // Font Awesome icon
+                  "className": 'details-control', // Add a class for styling
+                  "width": "15px"
+                },
+                {"data": "blended_classifiers"},
+                {"data": "accuracy"},
+                {"data": "kappa"},
+                {"data": "precision"},
+                {"data": "recall"},
+                {"data": "f1_score"},
+                {"data": "confusion_matrix"},
+                {"data": "execution_time"}
+
+            ],
+            "order": [[1, 'asc']], // Set the initial order
+            "dom": 'Bfrtip',
+            "buttons": [
+                'csv', 'excel', 'pdf'
+            ],
+
+        });
+
+        // Toggle child row details
+        $('#resultsTable tbody').on('click', 'td.details-control', function() {
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                $(this).html('<i class="fas fa-plus"></i>');
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                // Open this row
+                $(this).html('<i class="fas fa-minus"></i>');
+                row.child(format(row.data())).show();
+                tr.addClass('shown');
+            }
+        });
+    });
+    // Define the format function to display child row content
+    function format(d) {
+        // d is the original data object for the row
+        return '<b>Total Classifiers:</b> ' + d.total_classifiers
+        + ', <b>Features:</b> ' + d.total_features
+        + ', <b>Training Data:</b> ' + d.training_data_size
+        + ', <b>Test Data:</b> ' + d.test_data_size
+        + ', <b>Random State:</b> ' + d.random_state
+        + ', <b>Preprocessing:</b> ' + d.preprocessing
+        + ', <b>Smote:</b> ' + d.smote
+        + ', <b>CPU Cores:</b> ' + d.total_cpu_cores
+        + ', <b>CPU Usage:</b> ' + d.cpu_usage
+        + ', <b>RAM:</b> ' + d.total_ram
+        + ', <b>Memory Usage:</b> ' + d.memory_usage
+        + ', <b>Processor:</b> ' + d.processor_type
+        + ', <b>OS:</b> ' + d.os_name;
+    }
+    </script>
+
+{% endblock %}

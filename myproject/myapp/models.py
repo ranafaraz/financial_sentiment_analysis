@@ -1,11 +1,20 @@
 from django.db import models
 
-# Create your models here.
 class UploadedFile(models.Model):
+    file = models.FileField(upload_to='uploads/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    datafile = models.FileField(upload_to='uploads/')
+
+class Dataset(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.CharField(max_length=5000)
+    file = models.FileField(upload_to='datasets/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
 
 class AnalysisResult(models.Model):
+    uploaded_file = models.ForeignKey(UploadedFile, on_delete=models.CASCADE)
     blended_classifiers = models.TextField()
     accuracy = models.FloatField()
     kappa = models.FloatField()
@@ -27,6 +36,7 @@ class AnalysisResult(models.Model):
     memory_usage = models.TextField()
     processor_type = models.TextField()
     os_name = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 

@@ -1,7 +1,7 @@
-<!-- myapp/templates/myapp/upload.html -->
+<!-- upload_dataset.html -->
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Upload file</button>
+    <button type="submit">Upload</button>
 </form>
